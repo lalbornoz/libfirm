@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # This file is part of libFirm.
 # Copyright (C) 2012 Karlsruhe Institute of Technology.
@@ -8,8 +8,23 @@ sys.dont_write_bytecode = True
 import argparse
 from jinja2 import Environment
 import filters
-import imp
 import jinjautil
+
+# Since python3, importing an arbitrary file became somewhat more involved. This piece of code is from "spack" at
+# https://github.com/epfl-scitas/spack/blob/releases/humagne/lib/spack/llnl/util/lang.py
+# and licensed under Apache-2.0.
+def load_module_from_file(module_name, module_path):
+    if sys.version_info[0] == 3 and sys.version_info[1] >= 5:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(module_name, module_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+    else:
+        import importlib.machinery
+        loader = importlib.machinery.SourceFileLoader(module_name, module_path)
+        module = loader.load_module()
+
+    return module
 
 
 def main(argv):
@@ -38,9 +53,9 @@ def main(argv):
     loader.includedirs += config.includedirs
 
     # Load specfile
-    imp.load_source('spec', config.specfile)
+    load_module_from_file('spec', config.specfile)
     for num, extrafile in enumerate(config.extra):
-        imp.load_source('extra%s' % (num,), extrafile)
+        load_module_from_file('extra%s' % (num,), extrafile)
 
     env = Environment(loader=loader, keep_trailing_newline=True)
     env.globals.update(jinjautil.exports)

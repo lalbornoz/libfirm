@@ -637,9 +637,9 @@ class Environment(object):
                 warn(Warning('py_compile has no effect on pypy or Python 3'))
                 py_compile = False
             else:
-                import imp
+                import importlib.util
                 import marshal
-                py_header = imp.get_magic() + \
+                py_header = importlib.util.MAGIC_NUMBER + \
                     u'\xff\xff\xff\xff'.encode('iso-8859-15')
 
                 # Python 3.3 added a source filesize to the header
