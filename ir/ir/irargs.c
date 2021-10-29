@@ -138,7 +138,7 @@ static int firm_emit(lc_appendable_t *app, const lc_arg_occ_t *occ,
 	}
 	case k_type: {
 		ir_type *type = (ir_type*)X;
-		char type_name[256];
+		char type_name[255];
 		ir_print_type(type_name, sizeof(type_name), type);
 		tp_opcode opcode = get_type_opcode(type);
 		snprintf(buf, sizeof(buf), "%s%s:%s", A("type"),
@@ -170,7 +170,7 @@ static int firm_emit(lc_appendable_t *app, const lc_arg_occ_t *occ,
 			break;
 		default:
 			if (is_Const(node)) {
-				char tv_buf[256];
+				char tv_buf[253];
 				ir_tarval *tv = get_Const_tarval(node);
 				if (tv)
 					tarval_snprintf(tv_buf, sizeof(tv_buf), tv);
