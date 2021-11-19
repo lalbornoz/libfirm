@@ -436,13 +436,13 @@ static void extend_path(ilp_env_t *ienv, deq_t *path, const ir_node *irn)
 		curr_path[i++] = n;
 	}
 
-	for (int i = 1; i < len; ++i) {
+	for (int i = 1; i < len - 1; ++i) {
 		if (be_values_interfere(irn, curr_path[i]))
 			goto end;
 	}
 
 	/* check for terminating interference */
-	if (be_values_interfere(irn, curr_path[0])) {
+	if (len > 1 && be_values_interfere(irn, curr_path[0])) {
 		/* One node is not a path. */
 		/* And a path of length 2 is covered by a clique star constraint. */
 		if (len > 2) {
