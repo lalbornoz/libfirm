@@ -105,6 +105,12 @@ static void find_unreachable_blocks(ir_node *block, void *env)
 	if (get_Block_dom_depth(block) >= 0)
 		return;
 
+#ifdef DEBUG_libfirm
+	if (block == get_irg_end_block(get_irn_irg(block))) {
+		panic("Control flow does not reach the end block.");
+	}
+#endif
+
 	deq_t *waitq = (deq_t *)env;
 	foreach_block_succ(block, edge) {
 		ir_node *succ_block = get_edge_src_irn(edge);
